@@ -5,21 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BentoBoard">
     <meta name="theme-color" content="#F2F2F7">
+    
+    <!-- Link to Manifest (Essential for PWA stability) -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- PERFORMANCE: Preconnect to CDNs to avoid "Hanging" -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <title>Bentobox</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (with Error Handling) -->
+    <script src="https://cdn.tailwindcss.com" onerror="alert('Error loading styling. Please refresh.')"></script>
     
-    <!-- Phosphor Icons (Clean, Apple-like icons) -->
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Google Fonts: Inter (Closest free web font to San Francisco) -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
-            darkMode: 'media', // Uses system preference
+            darkMode: 'media', 
             theme: {
                 extend: {
                     fontFamily: {
@@ -57,60 +68,24 @@
     </script>
 
     <style>
-        /* iOS-like Smooth Scrolling & No Select */
         body {
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             user-select: none;
         }
-
-        /* Hide Scrollbar but allow scrolling */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* The "Squircle" Active State Animation */
-        .bento-card {
-            transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.2s ease, opacity 0.2s ease;
-        }
-        .bento-card:active {
-            transform: scale(0.96);
-            opacity: 0.8;
-        }
-        
-        /* Disabled state for coming soon apps */
-        .bento-disabled {
-            opacity: 0.6;
-            filter: grayscale(0.8);
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* Glassmorphism for Header */
-        .glass-header {
-            background: rgba(242, 242, 247, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        @media (prefers-color-scheme: dark) {
-            .glass-header {
-                background: rgba(0, 0, 0, 0.8);
-            }
-        }
-        
-        /* Modal Transition */
-        #setup-modal {
-            transition: opacity 0.3s ease;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .bento-card { transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.2s ease, opacity 0.2s ease; }
+        .bento-card:active { transform: scale(0.96); opacity: 0.8; }
+        .bento-disabled { opacity: 0.6; filter: grayscale(0.8); cursor: not-allowed; pointer-events: none; }
+        .glass-header { background: rgba(242, 242, 247, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        @media (prefers-color-scheme: dark) { .glass-header { background: rgba(0, 0, 0, 0.8); } }
+        #setup-modal { transition: opacity 0.3s ease; }
     </style>
 </head>
 <body class="bg-ios-bg dark:bg-ios-dark-bg text-ios-text dark:text-ios-dark-text font-sans antialiased min-h-screen pb-safe-offset">
 
-    <!-- Status Bar Spacer (for mobile standalone mode) -->
+    <!-- Status Bar Spacer -->
     <div class="h-safe-top w-full"></div>
 
     <!-- Main Container -->
@@ -119,10 +94,9 @@
         <!-- Header -->
         <header class="mb-6 flex justify-between items-end animate-fade-in-down">
             <div>
-                <p id="date-display" class="text-ios-gray font-semibold text-xs uppercase tracking-wide mb-1">Loading...</p>
+                <p id="date-display" class="text-ios-gray font-semibold text-xs uppercase tracking-wide mb-1">&nbsp;</p> <!-- Empty space prevents layout shift -->
                 <h1 id="greeting" class="text-3xl font-bold tracking-tight">Dashboard</h1>
             </div>
-            <!-- Settings / User Placeholder -->
             <button onclick="changeName()" class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden shadow-sm flex items-center justify-center transition-colors hover:bg-gray-300 dark:hover:bg-gray-600">
                 <i class="ph-fill ph-user text-gray-400 dark:text-gray-500 text-xl"></i>
             </button>
@@ -131,30 +105,23 @@
         <!-- GRID LAYOUT -->
         <div class="grid grid-cols-2 gap-4">
 
-            <!-- TIER 1: MAIN APPS (Large Cards) -->
-            
-            <!-- GradeVault (Full Width) -->
+            <!-- TIER 1: MAIN APPS -->
             <a href="https://darylmilanes.com/GradeVault" target="_blank" class="col-span-2 bento-card group relative overflow-hidden rounded-[24px] bg-white dark:bg-ios-dark-card shadow-ios h-40 p-5 flex flex-col justify-between decoration-transparent">
-                <!-- Decorative Background Gradient -->
                 <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-100 to-emerald-50 dark:from-green-900/20 dark:to-transparent rounded-full blur-2xl -mr-10 -mt-10 opacity-70"></div>
-                
                 <div class="flex justify-between items-start z-10">
                     <div class="bg-green-100 dark:bg-green-900/30 w-10 h-10 rounded-full flex items-center justify-center text-ios-green">
                         <i class="ph-fill ph-shield-check text-xl"></i>
                     </div>
                     <i class="ph-bold ph-arrow-up-right text-gray-300 group-hover:text-gray-400 transition-colors"></i>
                 </div>
-                
                 <div class="z-10">
                     <h2 class="text-xl font-bold leading-tight">GradeVault</h2>
                     <p class="text-ios-gray text-sm mt-1">Student-Teacher Portal</p>
                 </div>
             </a>
 
-            <!-- Lesson Dashboard (Half Width) -->
             <a href="https://darylmilanes.com/lesson_dashboard" target="_blank" class="col-span-1 bento-card group rounded-[24px] bg-white dark:bg-ios-dark-card shadow-ios aspect-square p-4 flex flex-col justify-between decoration-transparent relative overflow-hidden">
                 <div class="absolute bottom-0 right-0 w-20 h-20 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-xl -mr-5 -mb-5"></div>
-                
                 <div class="bg-blue-100 dark:bg-blue-900/30 w-9 h-9 rounded-full flex items-center justify-center text-ios-blue z-10">
                     <i class="ph-fill ph-chalkboard-teacher text-lg"></i>
                 </div>
@@ -164,10 +131,8 @@
                 </div>
             </a>
 
-            <!-- Class Schedule (Half Width) -->
             <a href="https://darylmilanes.com/class-schedule" target="_blank" class="col-span-1 bento-card group rounded-[24px] bg-white dark:bg-ios-dark-card shadow-ios aspect-square p-4 flex flex-col justify-between decoration-transparent relative overflow-hidden">
                  <div class="absolute bottom-0 left-0 w-20 h-20 bg-orange-50 dark:bg-orange-900/10 rounded-full blur-xl -ml-5 -mb-5"></div>
-
                 <div class="bg-orange-100 dark:bg-orange-900/30 w-9 h-9 rounded-full flex items-center justify-center text-ios-orange z-10">
                     <i class="ph-fill ph-calendar text-lg"></i>
                 </div>
@@ -178,13 +143,12 @@
             </a>
 
 
-            <!-- TIER 2: ACADEMIC TOOLS (App Icons Row) -->
-            
+            <!-- TIER 2: ACADEMIC TOOLS -->
             <div class="col-span-2 mt-6">
                 <h4 class="text-xs font-semibold text-ios-gray uppercase tracking-wider ml-1 mb-3">Academic Tools</h4>
                 <div class="flex justify-between px-1 gap-2">
                     
-                    <!-- 1. CareerMode (Active) -->
+                    <!-- 1. CareerMode -->
                     <a href="https://darylmilanes.com/careermode/" target="_blank" class="flex flex-col items-center gap-2 w-1/4 bento-card relative">
                         <div class="w-[56px] h-[56px] rounded-[14px] bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white shadow-md">
                             <i class="ph-fill ph-briefcase text-2xl"></i>
@@ -192,7 +156,7 @@
                         <span class="text-[10px] font-medium text-center leading-tight">Career<br>Mode</span>
                     </a>
 
-                    <!-- 2. Study Tracker (Active) -->
+                    <!-- 2. Study Tracker -->
                     <a href="https://darylmilanes.com/studytracker" target="_blank" class="flex flex-col items-center gap-2 w-1/4 bento-card relative">
                         <div class="w-[56px] h-[56px] rounded-[14px] bg-gradient-to-br from-ios-indigo to-purple-600 flex items-center justify-center text-white shadow-md">
                             <i class="ph-fill ph-chart-line-up text-2xl"></i>
@@ -200,7 +164,7 @@
                         <span class="text-[10px] font-medium text-center leading-tight">Study<br>Tracker</span>
                     </a>
 
-                    <!-- 3. Quiz Gen (Active) -->
+                    <!-- 3. Quiz Gen -->
                     <a href="https://darylmilanes.com/quizgen" target="_blank" class="flex flex-col items-center gap-2 w-1/4 bento-card relative">
                         <div class="w-[56px] h-[56px] rounded-[14px] bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white shadow-md">
                             <i class="ph-fill ph-lightning text-2xl"></i>
@@ -208,7 +172,7 @@
                         <span class="text-[10px] font-medium text-center leading-tight">Quiz<br>Gen</span>
                     </a>
 
-                    <!-- 4. Writing Lab (Active) -->
+                    <!-- 4. Writing Lab -->
                     <a href="https://darylmilanes.com/writinglab/" target="_blank" class="flex flex-col items-center gap-2 w-1/4 bento-card relative">
                         <div class="w-[56px] h-[56px] rounded-[14px] bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white shadow-md">
                             <i class="ph-fill ph-pen-nib text-2xl"></i>
@@ -220,15 +184,11 @@
             </div>
 
 
-            <!-- TIER 3: GAME (Full Width Banner) -->
-            
+            <!-- TIER 3: GAME -->
             <div class="col-span-2 mt-4">
                 <a href="https://darylmilanes.com/game-letsvaultin/" target="_blank" class="bento-card relative overflow-hidden rounded-[20px] h-32 flex items-center justify-center shadow-ios text-white">
-                    <!-- Game Background -->
                     <div class="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-orange-400"></div>
-                    <!-- Pattern/Texture overlay -->
                     <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMSI+PHBhdGggZD0iTTAgMjBMMjAgME0xMCAyMEwyMCAxME0wIDEwTDEwIDAiLz48L3N2Zz4=')]"></div>
-                    
                     <div class="z-10 text-center">
                         <div class="flex items-center justify-center gap-2 mb-1">
                             <i class="ph-fill ph-game-controller text-2xl drop-shadow-md"></i>
@@ -239,19 +199,16 @@
                 </a>
             </div>
 
-            <!-- SEPARATOR LINE -->
+            <!-- SEPARATOR -->
             <div class="col-span-2 mt-8 px-2">
                 <hr class="border-gray-200 dark:border-zinc-800/60 border-1">
             </div>
 
-            <!-- TIER 4: INSPIRATION & WELLNESS (Low-Key Extras) -->
-            
+            <!-- TIER 4: INSPIRATION & WELLNESS -->
             <div class="col-span-2 mt-2 mb-4">
                 <h4 class="text-xs font-semibold text-ios-gray uppercase tracking-wider ml-4 mb-2">Inspiration & Wellness</h4>
-                
                 <div class="bg-white dark:bg-ios-dark-card rounded-[18px] overflow-hidden shadow-sm">
                     
-                    <!-- 1. Beyond Aware -->
                     <a href="https://darylmilanes.com/beyond-aware/" target="_blank" class="flex items-center gap-3 p-3 pl-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div class="w-7 h-7 rounded bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center text-ios-teal text-sm">
                             <i class="ph-fill ph-plant"></i>
@@ -260,7 +217,6 @@
                         <i class="ph-bold ph-caret-right text-gray-300 text-xs mr-2"></i>
                     </a>
 
-                    <!-- 2. The Series: Guide -->
                     <a href="https://guide.darylmilanes.com/" target="_blank" class="flex items-center gap-3 p-3 pl-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div class="w-7 h-7 rounded bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-ios-red text-sm">
                             <i class="ph-fill ph-compass"></i>
@@ -269,7 +225,6 @@
                         <i class="ph-bold ph-caret-right text-gray-300 text-xs mr-2"></i>
                     </a>
 
-                    <!-- 3. The Series: Overview -->
                     <a href="https://overview.darylmilanes.com/" target="_blank" class="flex items-center gap-3 p-3 pl-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div class="w-7 h-7 rounded bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-ios-yellow text-sm">
                             <i class="ph-fill ph-binoculars"></i>
@@ -278,7 +233,6 @@
                         <i class="ph-bold ph-caret-right text-gray-300 text-xs mr-2"></i>
                     </a>
 
-                    <!-- 4. The Series: Discover -->
                     <a href="https://discover.darylmilanes.com/" target="_blank" class="flex items-center gap-3 p-3 pl-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div class="w-7 h-7 rounded bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-ios-purple text-sm">
                             <i class="ph-fill ph-lightbulb"></i>
@@ -287,7 +241,6 @@
                         <i class="ph-bold ph-caret-right text-gray-300 text-xs mr-2"></i>
                     </a>
 
-                    <!-- 5. Scripture Pick -->
                     <a href="https://darylmilanes.com/pick-a-verse/" target="_blank" class="flex items-center gap-3 p-3 pl-4 active:bg-gray-100 dark:active:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div class="w-7 h-7 rounded bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-ios-indigo text-sm">
                             <i class="ph-fill ph-book-open-text"></i>
@@ -295,7 +248,6 @@
                         <span class="text-sm font-medium flex-grow">Scripture Pick</span>
                         <i class="ph-bold ph-caret-right text-gray-300 text-xs mr-2"></i>
                     </a>
-
                 </div>
             </div>
 
@@ -308,7 +260,7 @@
 
     </div>
 
-    <!-- WELCOME / NAME SETUP MODAL -->
+    <!-- WELCOME MODAL -->
     <div id="setup-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm hidden">
         <div class="bg-white dark:bg-zinc-800 w-[85%] max-w-xs p-6 rounded-[24px] shadow-2xl text-center transform transition-all scale-100">
             <div class="w-12 h-12 bg-ios-blue/10 text-ios-blue rounded-full flex items-center justify-center mx-auto mb-4">
@@ -316,57 +268,29 @@
             </div>
             <h3 class="text-xl font-bold mb-2">Welcome!</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">What should I call you?</p>
-            
             <input type="text" id="name-input" class="w-full bg-gray-100 dark:bg-zinc-700/50 border-none rounded-xl px-4 py-3 text-center text-lg font-medium focus:ring-2 focus:ring-ios-blue focus:outline-none mb-5" placeholder="Your Name" autocomplete="off">
-            
-            <button onclick="saveNameFromModal()" class="w-full bg-ios-blue text-white font-bold py-3.5 rounded-xl active:opacity-90 transition-opacity text-sm">
-                Get Started
-            </button>
+            <button onclick="saveNameFromModal()" class="w-full bg-ios-blue text-white font-bold py-3.5 rounded-xl active:opacity-90 transition-opacity text-sm">Get Started</button>
         </div>
     </div>
 
     <script>
-        // 1. Dynamic Date Display
         function updateDate() {
             const dateElement = document.getElementById('date-display');
             const now = new Date();
-            const options = { weekday: 'long', month: 'long', day: 'numeric' };
-            dateElement.textContent = now.toLocaleDateString('en-US', options);
+            dateElement.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
         }
 
-        // 2. Smart Greeting (Uses LocalStorage or Generic)
         function updateGreeting() {
             const greetingElement = document.getElementById('greeting');
             const hour = new Date().getHours();
-            let timeGreeting = 'Hello';
-
-            if (hour >= 5 && hour < 12) {
-                timeGreeting = 'Good Morning';
-            } else if (hour >= 12 && hour < 18) {
-                timeGreeting = 'Good Afternoon';
-            } else {
-                timeGreeting = 'Good Evening';
-            }
-
-            // Check if user has a stored name
+            let timeGreeting = hour >= 5 && hour < 12 ? 'Good Morning' : hour >= 12 && hour < 18 ? 'Good Afternoon' : 'Good Evening';
             const storedName = localStorage.getItem('bentobox_user_name');
-            
-            if (storedName) {
-                greetingElement.textContent = `${timeGreeting}, ${storedName}`;
-            } else {
-                // Generic fallback if no name is set
-                greetingElement.textContent = `${timeGreeting}`;
-            }
+            greetingElement.textContent = storedName ? `${timeGreeting}, ${storedName}` : timeGreeting;
         }
         
-        // 3. Check for name on load
         function checkFirstVisit() {
-            // Check if we've explicitly marked this device as visited
             const hasVisited = localStorage.getItem('bentobox_visited');
-            // Also check for name just in case (backward compatibility)
             const storedName = localStorage.getItem('bentobox_user_name');
-            
-            // Only show if they haven't visited AND don't have a name
             if (!hasVisited && !storedName) {
                 const modal = document.getElementById('setup-modal');
                 modal.classList.remove('hidden');
@@ -374,49 +298,45 @@
             }
         }
 
-        // 4. Save name from Modal
         function saveNameFromModal() {
             const input = document.getElementById('name-input');
             const name = input.value.trim();
-            const modal = document.getElementById('setup-modal');
-            
-            // CRITICAL: Mark device as visited so this modal never auto-appears again
             localStorage.setItem('bentobox_visited', 'true');
-            
             if (name) {
                 localStorage.setItem('bentobox_user_name', name);
                 updateGreeting();
             }
-            
-            // Always close the modal
-            modal.classList.add('hidden');
+            document.getElementById('setup-modal').classList.add('hidden');
         }
 
-        // 5. Allow user to set name via clicking the profile icon (Manual Trigger)
         function changeName() {
             const currentName = localStorage.getItem('bentobox_user_name') || '';
             const modal = document.getElementById('setup-modal');
             const input = document.getElementById('name-input');
-            
-            input.value = currentName; // Pre-fill current name
-            modal.classList.remove('hidden'); // Reuse the modal
+            input.value = currentName;
+            modal.classList.remove('hidden');
             input.focus();
         }
 
-        // 6. Update Schedule Widget Subtitle
         function updateScheduleWidget() {
-            const scheduleElement = document.getElementById('schedule-day');
             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const today = days[new Date().getDay()];
-            scheduleElement.textContent = today;
+            document.getElementById('schedule-day').textContent = days[new Date().getDay()];
+        }
+        
+        // --- SERVICE WORKER REGISTRATION (Essential for fixing "Loading" issues) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             updateDate();
             updateGreeting();
             updateScheduleWidget();
-            checkFirstVisit(); // Check if we need to ask for name
+            checkFirstVisit();
         });
     </script>
 </body>
